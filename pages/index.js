@@ -5,38 +5,10 @@
 // colocando eles dentro de uma tag article
 
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import appConfig from '../config.json';
 
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                list-style: none;
-            }
-            body {
-                font-family: "Open Sans", sans-serif;
-            }
-            /* App fit Height */
-            html,
-            body,
-            #__next {
-                min-height: 100vh;
-                display: flex;
-                flex: 1;
-            }
-            #__next {
-                flex: 1;
-            }
-            #__next > * {
-                flex: 1;
-            }
-            /* ./App fit Height */
-    `}</style>
-    );
-}
 
 function Titulo(props) {
     const titulo = props.children;
@@ -69,17 +41,18 @@ function Titulo(props) {
 // export default HomePage;
 
 export default function PaginaInicial() {
-    const username = 'peas';
+    const [username, setUsername] = useState('marandmart');
+    // variável de roteamento que pode-se utilizar para redirecionar para outra página sem reload
+    const roteamento = useRouter();
 
     return (
         <>
-            <GlobalStyle />
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: appConfig.theme.colors.primary[500],
-                    backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
-                    backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+                    backgroundColor: appConfig.theme.colors.primary["000"],
+                    backgroundImage: 'url(https://images2.alphacoders.com/103/1032646.png)',
+                    backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'bottom right', backgroundBlendMode: 'multiply',
                 }}
             >
                 <Box
@@ -104,8 +77,14 @@ export default function PaginaInicial() {
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
                         }}
+                        onSubmit={function (event) {
+                            event.preventDefault();
+                            // uso do método push para carregar os conteúdos do arquivo chat.js na página atual
+                            // roteamento possuí varios outros métodos dentro dele. checar documentação
+                            roteamento.push('/chat');
+                        }}
                     >
-                        <Titulo tag="h2">Boas vindas de volta!</Titulo>
+                        <Titulo tag="h2">Boas vindas!</Titulo>
                         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                             {appConfig.name}
                         </Text>
@@ -119,6 +98,10 @@ export default function PaginaInicial() {
                                     mainColorHighlight: appConfig.theme.colors.primary[500],
                                     backgroundColor: appConfig.theme.colors.neutrals[800],
                                 },
+                            }}
+                            onChange={function (event) {
+                                const valorDoCampo = event.target.value;
+                                if (valorDoCampo.length > 2) setUsername(valorDoCampo);
                             }}
                         />
                         <Button
