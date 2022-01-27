@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import appConfig from '../config.json';
 
-
 function Titulo(props) {
     const titulo = props.children;
     const Tag = props.tag || "h1";
@@ -27,18 +26,6 @@ function Titulo(props) {
     );
 }
 
-// function HomePage() {
-//     // JSX
-//     return (
-//         <div>
-//             <GlobalStyle />
-//             <Titulo tag="h1">Welcome to this test modded</Titulo>
-//             <h2>Discord do Aggretsuko</h2>
-//         </div>
-//     );
-// }
-
-// export default HomePage;
 
 export default function PaginaInicial() {
     const [username, setUsername] = useState('marandmart');

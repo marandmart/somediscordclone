@@ -1,24 +1,51 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
 
 export default function ChatPage() {
-    // Sua lógica vai aqui
     const [mensagem, setMensagem] = useState('');
     const [listaDeMensagens, setListaDeMensagens] = useState([]);
-    // ./Sua lógica vai aqui
+
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNjYzOSwiZXhwIjoxOTU4ODkyNjM5fQ.QoxDkLiJ_ZUZT6w5duGQiwPMXqlloIjNo916V6RGKRE';
+    const SUPABASE_URL = 'https://yvqnmszzgisvxernihyp.supabase.co';
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    useEffect(() => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', { ascending: false }) // para que mostre as mensagens na ordem correta
+            .then(({ data }) => {
+                console.log(data);
+                setListaDeMensagens(data);
+            });
+    }, []);
+
     const handleNovaMensagem = (novaMensagem) => {
         const mensagem = {
-            id: listaDeMensagens.length + 1 + '-' + novaMensagem,
+            // id: listaDeMensagens.length + 1 + '-' + novaMensagem, apagado por que o servidor cria o proprio id
             de: 'vanessametonini',
             texto: novaMensagem,
         };
-        setListaDeMensagens([mensagem, ...listaDeMensagens]);
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                // tem que ser um objeto com os MESMOS CAMPOS que foram aplicados no supabase 
+                mensagem
+            ])
+            .then(({ data }) => {
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
+                ]);
+            })
         setMensagem('');
     }
     const apagarItem = (id) => {
         let novaLista = listaDeMensagens.filter(obj => obj.id !== id);
         setListaDeMensagens(novaLista);
+        // alterar os dados no servidor
     }
 
     return (
@@ -166,7 +193,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/vanessametonini.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Button
                                 label="x"
