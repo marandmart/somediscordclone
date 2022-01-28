@@ -68,7 +68,7 @@ export default function PaginaInicial() {
                             event.preventDefault();
                             // uso do método push para carregar os conteúdos do arquivo chat.js na página atual
                             // roteamento possuí varios outros métodos dentro dele. checar documentação
-                            roteamento.push('/chat');
+                            roteamento.push(`/chat?username=${username}`);
                         }}
                     >
                         <Titulo tag="h2">Boas vindas!</Titulo>
