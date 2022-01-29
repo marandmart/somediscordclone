@@ -5,10 +5,6 @@ import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
-// TODO
-// [] - hover to show github data with api.github.com/users/username
-// [] - fazer com que somente quem criou a mensagem possa apagar a mensagem do chat
-
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNjYzOSwiZXhwIjoxOTU4ODkyNjM5fQ.QoxDkLiJ_ZUZT6w5duGQiwPMXqlloIjNo916V6RGKRE';
 const SUPABASE_URL = 'https://yvqnmszzgisvxernihyp.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -148,7 +144,11 @@ export default function ChatPage() {
                             }}
                         >
 
-                            <MessageList mensagens={listaDeMensagens} apagarItem={apagarItem} />
+                            <MessageList
+                                mensagens={listaDeMensagens}
+                                apagarItem={apagarItem}
+                                usuarioLogado={usuarioLogado}
+                            />
 
                             <Box
                                 as="form"
@@ -187,6 +187,7 @@ export default function ChatPage() {
                                         handleNovaMensagem(`:sticker:${sticker}`)
                                     }}
                                 />
+
                                 <Button
                                     label="Enviar"
                                     colorVariant='positive'
@@ -227,6 +228,9 @@ function Header() {
 
 function MessageList(props) {
     const apagarItem = props.apagarItem;
+    const usuarioLogado = props.usuarioLogado || 'marandmart';
+    const mensagens = props.mensagens;
+
     return (
         <Box
             tag="ul"
@@ -239,7 +243,7 @@ function MessageList(props) {
                 marginBottom: '16px',
             }}
         >
-            {props.mensagens.map((mensagem) => {
+            {mensagens.map((mensagem) => {
                 return (
                     <Text
                         key={mensagem.id}
@@ -259,36 +263,29 @@ function MessageList(props) {
                                 marginBottom: '8px',
                             }}
                         >
-                            <Box
+                            <Image
                                 styleSheet={{
-                                    display: 'inline',
-                                    hover: {
-                                        // adicionar efeito que mostra dados do github
-                                    }
+                                    width: '40px',
+                                    height: '40px',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    marginRight: '8px',
                                 }}
-                            >
-                                <Image
-                                    styleSheet={{
-                                        width: '40px',
-                                        height: '40px',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        marginRight: '8px',
-                                    }}
-                                    src={`https://github.com/${mensagem.de}.png`}
-                                />
-                            </Box>
-                            <Button
-                                label="x"
-                                colorVariant='neutral'
-                                styleSheet={{
-                                    position: 'absolute',
-                                    right: '10px',
-                                }}
-                                onClick={() => {
-                                    apagarItem(mensagem.id);
-                                }}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
+                            {mensagem.de === usuarioLogado &&
+                                <Button
+                                    label="x"
+                                    colorVariant='neutral'
+                                    styleSheet={{
+                                        position: 'absolute',
+                                        right: '10px',
+                                    }}
+                                    onClick={() => {
+                                        apagarItem(mensagem.id);
+                                    }}
+                                />
+                            }
                             <Text tag="strong">
                                 {mensagem.de}
                             </Text>
