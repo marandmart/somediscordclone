@@ -39,7 +39,7 @@ export default function ChatPage() {
             .select('*')
             .order('id', { ascending: false }) // para que mostre as mensagens na ordem correta
             .then(({ data }) => {
-                console.log(data);
+                // console.log(data);
                 setListaDeMensagens(data);
             });
 
@@ -59,25 +59,29 @@ export default function ChatPage() {
     }, []);
 
 
-    const handleNovaMensagem = (novaMensagem) => {
+    const handleNovaMensagem = async (novaMensagem) => {
         const mensagem = {
             // id: listaDeMensagens.length + 1 + '-' + novaMensagem, apagado por que o servidor cria o proprio id
             de: usuarioLogado,
             texto: novaMensagem,
         };
-        supabaseClient
-            .from('mensagens')
-            .insert([
-                // tem que ser um objeto com os MESMOS CAMPOS que foram aplicados no supabase 
-                mensagem
-            ])
-        // .then(({ data }) => {
-        // função foi passada para a função acima, escutaMensagemEmTempoReal
-        // setListaDeMensagens([
-        //     data[0],
-        //     ...listaDeMensagens
-        // ]);
-        // })
+        try {
+            await supabaseClient
+                .from('mensagens')
+                .insert([
+                    // tem que ser um objeto com os MESMOS CAMPOS que foram aplicados no supabase 
+                    mensagem
+                ])
+            // .then(({ data }) => {
+            // função foi passada para a função acima, escutaMensagemEmTempoReal
+            // setListaDeMensagens([
+            //     data[0],
+            //     ...listaDeMensagens
+            // ]);
+            // })
+        } catch (error) {
+            console.log(error);
+        }
         setMensagem('');
     }
 
